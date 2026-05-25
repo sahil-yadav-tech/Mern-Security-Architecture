@@ -1,0 +1,5 @@
+/* Global styles */
+html, body, #root {
+  margin: 0;
+  font-family: sans-serif;
+}
