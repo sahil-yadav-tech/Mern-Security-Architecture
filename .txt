@@ -1,0 +1,67 @@
+console.log("JAI SHREE RAM JI / JAI BAJARANG BALI JI❤️👏");
+
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+connectDB();
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
+import dns from "dns";
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
+
+const connectDB = async () => {
+  try {
+    const uri = process.env.MONGO_URI;
+    if (!uri) {
+      throw new Error('MONGO_URI is not defined in environment variables');
+    }
+
+    await mongoose.connect(uri, {});
+
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    process.exit(1);
+  }
+};
+
+export default connectDB;
+
+
+MONGO_URI="mongodb+srv://sahilyadav:sahilyadav1234@cluster0.sa7j0za.mongodb.net/mern-security?appName=Cluster0"
+
+[nodemon] restarting due to changes...
+[nodemon] starting `node server.js`
+JAI SHREE RAM JI / JAI BAJARANG BALI JI❤️👏
+(node:10524) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Server running on port 5000
+MongoDB connection error: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/
+[nodemon] app crashed - waiting for file changes before starting...
