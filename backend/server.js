@@ -10,6 +10,7 @@ import apiLimiter from "./middleware/rateLimit/rateLimiter.js";
 import asyncHandler from "./utils/asyncHandler.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import User from "./models/User.js";
+import AppError from "./utils/AppError.js";
 dotenv.config();
 
 const app = express();
@@ -32,11 +33,11 @@ app.post("/api/users", async (req, res, next) => {
 
     console.log("Received phone number:", phone);
 
-    const user = await User.findOness({ phone });
+    const user = await User.findOne({ phone });
 
     // User not found
     if (!user) {
-      return next(new Error("User does not exist"));
+     return next(new AppError("User does not exist", 404));
     }
 
     res.json({
@@ -44,11 +45,19 @@ app.post("/api/users", async (req, res, next) => {
       message: "User found",
     });
   } catch (error) {
-    console.log(error, "Error in /api/users route");
     next(error);
   }
 });
 
+
+app.use((req, res, next) => {
+
+  res.status(404).json({
+    success: false,
+    message: "API Not Found",
+  });
+
+});
 // app.use(notFound);
 app.use(errorMiddleware);
 
