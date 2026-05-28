@@ -6,8 +6,10 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import apiLimiter from "./middleware/rateLimit/rateLimiter.js";
+import asyncHandler from "./utils/asyncHandler.js";
+import errorMiddleware from "./middleware/errorMiddleware.js";
+import User from "./models/User.js";
 dotenv.config();
 
 const app = express();
@@ -20,15 +22,35 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
+// app.use("/api/users", userRoutes);
 
 app.use("/api", apiLimiter);
-app.get("/api/user", (req, res) => {
-  res.send("Welcome to the MERN Security Architecture API");
+
+app.post("/api/users", async (req, res, next) => {
+  try {
+    const { phone } = req.body;
+
+    console.log("Received phone number:", phone);
+
+    const user = await User.findOness({ phone });
+
+    // User not found
+    if (!user) {
+      return next(new Error("User does not exist"));
+    }
+
+    res.json({
+      success: true,
+      message: "User found",
+    });
+  } catch (error) {
+    console.log(error, "Error in /api/users route");
+    next(error);
+  }
 });
 
-app.use(notFound);
-app.use(errorHandler);
+// app.use(notFound);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

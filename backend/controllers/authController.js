@@ -3,6 +3,13 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 
+export const sendOTP = async (req, res, next) => {
+  
+};
+
+
+
+    
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
