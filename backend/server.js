@@ -11,6 +11,7 @@ import asyncHandler from "./utils/asyncHandler.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import User from "./models/User.js";
 import AppError from "./utils/AppError.js";
+import sendResponse from "./utils/sendResponse.js";
 dotenv.config();
 
 const app = express();
@@ -27,26 +28,53 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api", apiLimiter);
 
-app.post("/api/users", async (req, res, next) => {
+app.post("/api/register", asyncHandler,async (req, res, next) => {
+
   try {
-    const { phone } = req.body;
 
-    console.log("Received phone number:", phone);
+    const { email, phone } = req.body;
 
-    const user = await User.findOne({ phone });
+    // Email exists
+    // const emailExists = await User.findOne({ email });
 
-    // User not found
-    if (!user) {
-     return next(new AppError("User does not exist", 404));
+    // if (emailExists) {
+    //   return next(
+    //     new AppError("Email already exists", 400)
+    //   );
+    // }
+
+    // // Phone exists
+    // const phoneExists = await User.findOne({ phone });
+
+    // if (phoneExists) {
+    //   return next(
+    //     new AppError("Phone already exists", 400)
+    //   );
+    // }
+
+    // // Create user
+    // const user = await User.create({
+    //   email,
+    //   phone,
+    // });
+
+    // Success
+    let user = {
+      phone,
     }
+return sendResponse(
+   res,
+   200,
+   "Login successful",
+   user=user
+);
 
-    res.json({
-      success: true,
-      message: "User found",
-    });
   } catch (error) {
+
     next(error);
+
   }
+
 });
 
 
