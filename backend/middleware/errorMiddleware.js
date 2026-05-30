@@ -7,7 +7,6 @@ const errorMiddleware = (err, req, res, next) => {
     success: false,
     status: err.statusCode || "error",
     message: err.message || "Server Error",
-    user:"sahil"
   });
 
 };
